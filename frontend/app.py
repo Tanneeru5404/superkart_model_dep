@@ -6,43 +6,51 @@ import requests
 BACKEND_URL = "http://backend:7860"
 
 # Set the title of the Streamlit app
-st.title("Superkart revenue Prediction")
+st.title("SuperKart Store-wise Product Revenue Prediction")
 
 # Section for online prediction
 st.subheader("Online Prediction")
 
-# Collect user input for property features
-room_type = st.selectbox("Room Type", ["Entire home/apt", "Private room", "Shared room"])
-accommodates = st.number_input("Accommodates (Number of guests)", min_value=1, value=2)
-bathrooms = st.number_input("Bathrooms", min_value=1, step=1, value=2)
-cancellation_policy = st.selectbox("Cancellation Policy (kind of cancellation policy)", ["strict", "flexible", "moderate"])
-cleaning_fee = st.selectbox("Cleaning Fee Charged?", ["True", "False"])
-instant_bookable = st.selectbox("Instantly Bookable?", ["False", "True"])
-review_scores_rating = st.number_input("Review Score Rating", min_value=0.0, max_value=100.0, step=1.0, value=90.0)
-bedrooms = st.number_input("Bedrooms", min_value=0, step=1, value=1)
-beds = st.number_input("Beds", min_value=0, step=1, value=1)
+# Collect user input based on SuperKart dataset attributes
+Product_Weight = st.number_input("Product Weight (in kg)", min_value=4.0, max_value=30.0, step=0.1, value=12.6)
+Product_Sugar_Content = st.selectbox("Product Sugar Content", ["Low Sugar", "Regular", "No Sugar"])
+Product_Allocated_Area = st.number_input("Product Allocated Area Ratio", min_value=0.0, max_value=1.0, step=0.01, value=0.05)
+Product_MRP = st.number_input("Product Maximum Retail Price (MRP)", min_value=10.0, max_value=500.0, step=1.0, value=147.0)
+Store_Establishment_Year = st.number_input("Store Establishment Year", min_value=1980, max_value=2025, step=1, value=2009)
+Store_Size = st.selectbox("Store Size", ["Medium", "High", "Small"])
+Store_Location_City_Type = st.selectbox("Store Location City Type", ["Tier 1", "Tier 2", "Tier 3"])
+Store_Type = st.selectbox("Store Type", ["Supermarket Type1", "Supermarket Type2", "Departmental Store", "Food Mart"])
+Product_Type = st.selectbox("Product Type Category", [
+    "Baking Goods", "Breads", "Breakfast", "Canned", "Dairy", "Frozen Foods",
+    "Fruits and Vegetables", "Hard Drinks", "Health and Hygiene", "Household",
+    "Meat", "Others", "Seafood", "Snack Foods", "Soft Drinks", "Starchy Foods"
+])
 
-# Convert user input into a DataFrame
-input_data = pd.DataFrame([{
-    'room_type': room_type,
-    'accommodates': accommodates,
-    'bathrooms': bathrooms,
-    'cancellation_policy': cancellation_policy,
-    'cleaning_fee': cleaning_fee,
-    'instant_bookable': 'f' if instant_bookable=="False" else "t",  # Convert to 't' or 'f'
-    'review_scores_rating': review_scores_rating,
-    'bedrooms': bedrooms,
-    'beds': beds
-}])
+# Convert user input into a JSON structure matching the preprocess pipeline
+# We will reconstruct the feature columns exactly as expected by the backend model.
+payload = {
+    'Product_Weight': Product_Weight,
+    'Product_Sugar_Content': Product_Sugar_Content,
+    'Product_Allocated_Area': Product_Allocated_Area,
+    'Product_MRP': Product_MRP,
+    'Store_Establishment_Year': Store_Establishment_Year,
+    'Store_Size': Store_Size,
+    'Store_Location_City_Type': Store_Location_City_Type,
+    'Store_Type': Store_Type,
+    'Product_Type': Product_Type
+}
 
 # Make prediction when the "Predict" button is clicked
-if st.button("Predict", type="primary"):
-    response = requests.post(f"{BACKEND_URL}/v1/rental", json=input_data.to_dict(orient='records')[0])  # Send data to Flask API
+if st.button("Predict Revenue", type="primary"):
+    response = requests.post(f"{BACKEND_URL}/v1/rental", json=payload)  # Send payload to Flask API
     if response.status_code == 200:
-        prediction = response.json()['Predicted Revenue (in dollars)']
-        st.success(f"Predicted Revenue (in dollars): {prediction}")
+        try:
+            prediction = response.json()['Predicted revenue (in dollars)']
+            st.success(f"Predicted Product Store Sales Total: ${prediction:,.2f}")
+        except KeyError:
+            st.error(f"Response format error. API returned: {response.text}")
     else:
-        st.error("Unable to connect to the prediction API.")
+        st.error(f"Unable to connect to the prediction API. Status code: {response.status_code}")
 
 # Section for batch prediction
 st.subheader("Batch Prediction")
