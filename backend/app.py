@@ -20,7 +20,7 @@ def home():
     return "Welcome to the SuperKart store wise prodcut revenue Prediction API!"
 
 # Define an endpoint for single property prediction (POST request)
-@superkart_revenue_predict_api.post('/v1/rental')
+@superkart_revenue_predict_api.post('/v1/predict')
 def predict_revenue_price():
     """
     This function handles POST requests to the '/v1/rental' endpoint.
@@ -62,7 +62,7 @@ def predict_revenue_price():
 
 
 # Define an endpoint for batch prediction (POST request)
-@superkart_revenue_predict_api.post('/v1/rentalbatch')
+@superkart_revenue_predict_api.post('/v1/predictbatch')
 def predict_revenue_batch():
     """
     This function handles POST requests to the '/v1/rentalbatch' endpoint.
