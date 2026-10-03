@@ -39,8 +39,8 @@ def predict_revenue_price():
         'Store_Size': property_data['Store_Size'],
         'Store_Location_City_Type': property_data['Store_Location_City_Type'],
         'Store_Type': property_data['Store_Type'],
-        'Store_Age_Years': property_data['Store_Age_Years'],
-        'Product_Type_Category': property_data['Product_Type_Category']
+        'Store_Establishment_Year': property_data['Store_Establishment_Year'],
+        'Product_Type': property_data['Product_Type']
     }
 
     # Convert the extracted data into a Pandas DataFrame
