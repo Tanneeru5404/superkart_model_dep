@@ -3,7 +3,11 @@ import pandas as pd
 import requests
 
 # Base URL of the Flask backend
-BACKEND_URL = "http://backend:7860"
+#BACKEND_URL = "http://backend:7860"
+
+import os
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:7860")
+
 
 # Set the title of the Streamlit app
 st.title("SuperKart Store-wise Product Revenue Prediction")
