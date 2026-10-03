@@ -42,7 +42,7 @@ payload = {
 
 # Make prediction when the "Predict" button is clicked
 if st.button("Predict Revenue", type="primary"):
-    response = requests.post(f"{BACKEND_URL}/v1/rental", json=payload)  # Send payload to Flask API
+    response = requests.post(f"{BACKEND_URL}/v1/predict", json=payload)  # Send payload to Flask API
     if response.status_code == 200:
         try:
             prediction = response.json()['Predicted revenue (in dollars)']
@@ -61,7 +61,7 @@ uploaded_file = st.file_uploader("Upload CSV file for batch prediction", type=["
 # Make batch prediction when the "Predict Batch" button is clicked
 if uploaded_file is not None:
     if st.button("Predict Batch", type="primary"):
-        response = requests.post(f"{BACKEND_URL}/v1/rentalbatch", files={"file": uploaded_file})  # Send file to Flask API
+        response = requests.post(f"{BACKEND_URL}/v1/predictbatch", files={"file": uploaded_file})  # Send file to Flask API
         if response.status_code == 200:
             predictions = response.json()
             st.success("Batch predictions completed!")
