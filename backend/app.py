@@ -32,25 +32,25 @@ def predict_revenue_price():
 
     # Extract relevant features from the JSON data
     sample = {
-        'room_type': property_data['room_type'],
-        'accommodates': property_data['accommodates'],
-        'bathrooms': property_data['bathrooms'],
-        'cancellation_policy': property_data['cancellation_policy'],
-        'cleaning_fee': property_data['cleaning_fee'],
-        'instant_bookable': property_data['instant_bookable'],
-        'review_scores_rating': property_data['review_scores_rating'],
-        'bedrooms': property_data['bedrooms'],
-        'beds': property_data['beds']
+        'Product_Weight': property_data['Product_Weight'],
+        'Product_Sugar_Content': property_data['Product_Sugar_Content'],
+        'Product_Allocated_Area': property_data['Product_Allocated_Area'],
+        'Product_MRP': property_data['Product_MRP'],
+        'Store_Size': property_data['Store_Size'],
+        'Store_Location_City_Type': property_data['Store_Location_City_Type'],
+        'Store_Type': property_data['Store_Type'],
+        'Store_Age_Years': property_data['Store_Age_Years'],
+        'Product_Type_Category': property_data['Product_Type_Category']
     }
 
     # Convert the extracted data into a Pandas DataFrame
     input_data = pd.DataFrame([sample])
 
-    # Make prediction (get log_price)
-    predicted_log_price = model.predict(input_data)[0]
+    # Make prediction (get Product_Store_Sales_Total)
+    predicted_Product_Store_Sales_Total = model.predict(input_data)[0]
 
     # Calculate actual price
-    predicted_price = np.exp(predicted_log_price)
+    predicted_price = np.exp(predicted_Product_Store_Sales_Total)
 
     # Convert predicted_price to Python float
     predicted_price = round(float(predicted_price), 2)
@@ -58,7 +58,7 @@ def predict_revenue_price():
     # When we send this value directly within a JSON response, Flask's jsonify function encounters a datatype error
 
     # Return the actual price
-    return jsonify({'Predicted Price (in dollars)': predicted_price})
+    return jsonify({'Predicted revenue (in dollars)': predicted_price})
 
 
 # Define an endpoint for batch prediction (POST request)
@@ -79,7 +79,7 @@ def predict_revenue_batch():
     predicted_log_prices = model.predict(input_data).tolist()
 
     # Calculate actual prices
-    predicted_prices = [round(float(np.exp(log_price)), 2) for log_price in predicted_log_prices]
+    predicted_prices = [round(float(np.exp(Product_Store_Sales_Total)), 2) for Product_Store_Sales_Total in predicted_log_prices]
 
     # Create a dictionary of predictions with property IDs as keys
     property_ids = input_data['id'].tolist()  # Assuming 'id' is the property ID column
